@@ -98,11 +98,15 @@ class _HomePageState extends State<HomePage>
               }
             },
             child: AnimatedContainer(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage("lib/assets/background.png"),
+                    fit: BoxFit.cover),
+              ),
               alignment: Alignment(brickXaxis, brickYaxis),
               duration: Duration(
                 milliseconds: 0,
               ),
-              color: Colors.blue[900],
               child: RotationTransition(
                 child: Brick(),
                 turns: Tween(begin: startRotatePos, end: endRotatePos)
@@ -111,10 +115,62 @@ class _HomePageState extends State<HomePage>
             ),
           ),
         ),
+        Container(
+          height: 5,
+          color: Colors.black87,
+        ),
         Expanded(
           child: Container(
-            color: Colors.black87,
-          ),
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "SCORE",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        "0",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 35,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "BEST",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        "0",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )),
         ),
       ],
     ));
