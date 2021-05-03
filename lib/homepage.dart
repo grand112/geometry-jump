@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geometry_jump/barriers.dart';
 import 'package:geometry_jump/brick.dart';
+import 'package:geometry_jump/alert.dart';
 
 import 'barriers.dart';
 
@@ -21,6 +22,7 @@ class _HomePageState extends State<HomePage>
   bool jumpStarted = false;
   bool gameStarted = false;
   bool firsRotate = true;
+  bool endGame = false;
   double startRotatePos = 0;
   double endRotatePos = 0.5;
   int score = 0;
@@ -55,6 +57,9 @@ class _HomePageState extends State<HomePage>
     if (!gameStarted) {
       Timer.periodic(Duration(milliseconds: 40), (timer) {
         loopBariers();
+        if (endGame) {
+          timer.cancel();
+        }
       });
       setState(() {
         gameStarted = true;
@@ -95,7 +100,9 @@ class _HomePageState extends State<HomePage>
       time += 0.05;
       height = -2.9 * time * time + 2.6 * time;
       setState(() {
-        brickYaxis = initialHeight - height;
+        if (!endGame) {
+          brickYaxis = initialHeight - height;
+        }
       });
       if (brickYaxis > 1) {
         timer.cancel();
@@ -109,7 +116,90 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  showEndGameDialog(BuildContext context) {
+    Widget restartButton = IconButton(
+      icon: Icon(
+        Icons.play_arrow,
+        color: Colors.red[700],
+        size: 40,
+      ),
+      onPressed: () {
+        restart();
+        Navigator.of(context).pop();
+      },
+    );
+
+    Widget scoreBoardButton = IconButton(
+      icon: Icon(
+        Icons.leaderboard,
+        color: Colors.red[700],
+        size: 40,
+      ),
+      onPressed: () {},
+    );
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return Alert(
+          restartButton: restartButton,
+          scoreBoardButton: scoreBoardButton,
+          score: score,
+        );
+      },
+    );
+  }
+
+  void restart() {
+    brickYaxis = 1;
+    brickXaxis = -0.9;
+    time = 0;
+    height = 0;
+    initialHeight = brickYaxis;
+    jumpStarted = false;
+    gameStarted = false;
+    firsRotate = true;
+    endGame = false;
+    startRotatePos = 0;
+    endRotatePos = 0.5;
+    score = 0;
+    barrierXone = 1;
+    barrierXtwo = barrierXone + 1.5;
+  }
+
+  void checkCollision() {
+    if (barrierXone > brickXaxis - 0.4 &&
+        barrierXone < brickXaxis + 0.4 &&
+        brickYaxis > 1 - 0.4) {
+      showEndGameDialog(context);
+      endGame = true;
+    }
+
+    if (barrierXtwo > brickXaxis - 0.4 &&
+        barrierXtwo < brickXaxis + 0.4 &&
+        brickYaxis > 1 - 0.2) {
+      showEndGameDialog(context);
+      endGame = true;
+    }
+
+    if (barrierXone > brickXaxis - 0.4 &&
+        barrierXone < brickXaxis + 0.4 &&
+        brickYaxis < -1 + 0.4) {
+      showEndGameDialog(context);
+      endGame = true;
+    }
+
+    if (barrierXtwo > brickXaxis - 0.4 &&
+        barrierXtwo < brickXaxis + 0.4 &&
+        brickYaxis < -1 + 0.6) {
+      showEndGameDialog(context);
+      endGame = true;
+    }
+  }
+
   void loopBariers() {
+    checkCollision();
     setState(() {
       if (barrierXtwo < -2) {
         barrierXtwo += 3.5;
@@ -131,7 +221,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: handleTap,
+      onTap: endGame ? () {} : handleTap,
       child: Scaffold(
           body: Column(
         children: [
