@@ -4,8 +4,9 @@ class Alert extends StatelessWidget {
   final Widget restartButton;
   final Widget scoreBoardButton;
   final int score;
+  final int record;
 
-  Alert({this.restartButton, this.scoreBoardButton, this.score});
+  Alert({this.restartButton, this.scoreBoardButton, this.score, this.record});
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +70,7 @@ class Alert extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      score.toString(),
+                      record.toString(),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,

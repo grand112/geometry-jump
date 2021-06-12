@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geometry_jump/barriers.dart';
 import 'package:geometry_jump/brick.dart';
 import 'package:geometry_jump/alert.dart';
+import 'package:geometry_jump/nick-name-alert.dart';
+import 'package:geometry_jump/scoreboard.dart';
 
 import 'barriers.dart';
 
@@ -26,12 +29,15 @@ class _HomePageState extends State<HomePage>
   double startRotatePos = 0;
   double endRotatePos = 0.5;
   int score = 0;
+  int record = 0;
   static double barrierXone = 1;
   double barrierXtwo = barrierXone + 1.5;
   AnimationController _rotationController;
+  TextEditingController wordController = TextEditingController();
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => showNickNameAlert());
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -41,8 +47,87 @@ class _HomePageState extends State<HomePage>
 
   @override
   void dispose() {
+    wordController.dispose();
     _rotationController.dispose();
     super.dispose();
+  }
+
+  void showNickNameAlert() {
+    Widget playButton = IconButton(
+      icon: Icon(
+        Icons.play_arrow,
+        color: Colors.red[700],
+        size: 40,
+      ),
+      onPressed: () {
+        getRecord();
+        Navigator.of(context).pop();
+      },
+    );
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return NickNameAlert(
+          playButton: playButton,
+          wordController: wordController,
+        );
+      },
+    );
+  }
+
+  void showScoreboard() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return Scoreboard();
+      },
+    );
+  }
+
+  Future<void> getRecord() async {
+    DocumentSnapshot userData = await Firestore.instance
+        .collection('scoreboard')
+        .document(wordController.text)
+        .get();
+
+    if (userData.data != null) {
+      setState(() {
+        record = userData.data['record'];
+      });
+    } else {
+      await Firestore.instance
+          .collection('scoreboard')
+          .document(wordController.text)
+          .setData({
+        'record': 0,
+        'nick': wordController.text,
+      });
+    }
+  }
+
+  Future<void> updateRecord(int score) async {
+    print(wordController.text);
+    DocumentSnapshot userData = await Firestore.instance
+        .collection('scoreboard')
+        .document(wordController.text)
+        .get();
+
+    if (userData.data['record'] != null && userData.data['record'] < score) {
+      await Firestore.instance
+          .collection('scoreboard')
+          .document(wordController.text)
+          .setData({
+        'record': score,
+        'nick': wordController.text,
+      });
+
+      setState(() {
+        record = score;
+      });
+    }
   }
 
   void jump() {
@@ -116,7 +201,7 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  showEndGameDialog(BuildContext context) {
+  showEndGameDialog(BuildContext context) async {
     Widget restartButton = IconButton(
       icon: Icon(
         Icons.play_arrow,
@@ -135,8 +220,12 @@ class _HomePageState extends State<HomePage>
         color: Colors.red[700],
         size: 40,
       ),
-      onPressed: () {},
+      onPressed: () {
+        showScoreboard();
+      },
     );
+
+    record = score > record ? score : record;
 
     showDialog(
       barrierDismissible: false,
@@ -146,6 +235,7 @@ class _HomePageState extends State<HomePage>
           restartButton: restartButton,
           scoreBoardButton: scoreBoardButton,
           score: score,
+          record: record,
         );
       },
     );
@@ -173,6 +263,7 @@ class _HomePageState extends State<HomePage>
         barrierXone < brickXaxis + 0.4 &&
         brickYaxis > 1 - 0.4) {
       showEndGameDialog(context);
+      updateRecord(score);
       endGame = true;
     }
 
@@ -180,6 +271,7 @@ class _HomePageState extends State<HomePage>
         barrierXtwo < brickXaxis + 0.4 &&
         brickYaxis > 1 - 0.2) {
       showEndGameDialog(context);
+      updateRecord(score);
       endGame = true;
     }
 
@@ -187,6 +279,7 @@ class _HomePageState extends State<HomePage>
         barrierXone < brickXaxis + 0.4 &&
         brickYaxis < -1 + 0.4) {
       showEndGameDialog(context);
+      updateRecord(score);
       endGame = true;
     }
 
@@ -194,6 +287,7 @@ class _HomePageState extends State<HomePage>
         barrierXtwo < brickXaxis + 0.4 &&
         brickYaxis < -1 + 0.6) {
       showEndGameDialog(context);
+      updateRecord(score);
       endGame = true;
     }
   }
@@ -349,7 +443,7 @@ class _HomePageState extends State<HomePage>
                           height: 20,
                         ),
                         Text(
-                          score.toString(),
+                          record.toString(),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 35,

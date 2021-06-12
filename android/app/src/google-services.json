@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "762991159436",
+    "project_id": "geometry-jump-project",
+    "storage_bucket": "geometry-jump-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762991159436:android:a9e84a5cbd0840a5f5f3a9",
+        "android_client_info": {
+          "package_name": "com.example.geometry_jump"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "762991159436-ai127dhvkjdq9gu43fg86sdpf1c6l3g8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBwCkheH_EWx9mMPnv95oY3IAtDmYOxlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "762991159436-ai127dhvkjdq9gu43fg86sdpf1c6l3g8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
