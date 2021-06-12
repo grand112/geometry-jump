@@ -109,7 +109,6 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> updateRecord(int score) async {
-    print(wordController.text);
     DocumentSnapshot userData = await Firestore.instance
         .collection('scoreboard')
         .document(wordController.text)
