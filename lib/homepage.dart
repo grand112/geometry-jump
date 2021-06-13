@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geometry_jump/barriers.dart';
@@ -34,6 +35,9 @@ class _HomePageState extends State<HomePage>
   double barrierXtwo = barrierXone + 1.5;
   AnimationController _rotationController;
   TextEditingController wordController = TextEditingController();
+  final mainThemeSoundPlayer = AssetsAudioPlayer();
+  final gameOverSoundPlayer = AssetsAudioPlayer();
+  bool mainThemeSongStarted = false;
 
   @override
   void initState() {
@@ -42,14 +46,28 @@ class _HomePageState extends State<HomePage>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
+    loadSounds();
     super.initState();
   }
 
   @override
   void dispose() {
+    mainThemeSoundPlayer.dispose();
+    gameOverSoundPlayer.dispose();
     wordController.dispose();
     _rotationController.dispose();
     super.dispose();
+  }
+
+  loadSounds() {
+    mainThemeSoundPlayer.open(
+      Audio("lib/assets/main_theme.mp3"),
+      autoStart: false,
+    );
+    gameOverSoundPlayer.open(
+      Audio("lib/assets/game_over.mp3"),
+      autoStart: false,
+    );
   }
 
   void showNickNameAlert() {
@@ -138,6 +156,10 @@ class _HomePageState extends State<HomePage>
   }
 
   void startGame() {
+    if (!mainThemeSongStarted) {
+      mainThemeSoundPlayer.play();
+      mainThemeSongStarted = true;
+    }
     if (!gameStarted) {
       Timer.periodic(Duration(milliseconds: 40), (timer) {
         loopBariers();
@@ -261,6 +283,9 @@ class _HomePageState extends State<HomePage>
     if (barrierXone > brickXaxis - 0.4 &&
         barrierXone < brickXaxis + 0.4 &&
         brickYaxis > 1 - 0.4) {
+      mainThemeSoundPlayer.stop();
+      mainThemeSongStarted = false;
+      gameOverSoundPlayer.play();
       showEndGameDialog(context);
       updateRecord(score);
       endGame = true;
@@ -269,6 +294,9 @@ class _HomePageState extends State<HomePage>
     if (barrierXtwo > brickXaxis - 0.4 &&
         barrierXtwo < brickXaxis + 0.4 &&
         brickYaxis > 1 - 0.2) {
+      mainThemeSoundPlayer.stop();
+      mainThemeSongStarted = false;
+      gameOverSoundPlayer.play();
       showEndGameDialog(context);
       updateRecord(score);
       endGame = true;
@@ -277,6 +305,9 @@ class _HomePageState extends State<HomePage>
     if (barrierXone > brickXaxis - 0.4 &&
         barrierXone < brickXaxis + 0.4 &&
         brickYaxis < -1 + 0.4) {
+      mainThemeSoundPlayer.stop();
+      mainThemeSongStarted = false;
+      gameOverSoundPlayer.play();
       showEndGameDialog(context);
       updateRecord(score);
       endGame = true;
@@ -285,6 +316,9 @@ class _HomePageState extends State<HomePage>
     if (barrierXtwo > brickXaxis - 0.4 &&
         barrierXtwo < brickXaxis + 0.4 &&
         brickYaxis < -1 + 0.6) {
+      mainThemeSoundPlayer.stop();
+      mainThemeSongStarted = false;
+      gameOverSoundPlayer.play();
       showEndGameDialog(context);
       updateRecord(score);
       endGame = true;
