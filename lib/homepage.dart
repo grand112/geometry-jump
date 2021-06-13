@@ -277,20 +277,22 @@ class _HomePageState extends State<HomePage>
   }
 
   void restart() {
-    brickYaxis = 1;
-    brickXaxis = -0.9;
-    time = 0;
-    height = 0;
-    initialHeight = brickYaxis;
-    jumpStarted = false;
-    gameStarted = false;
-    firsRotate = true;
-    endGame = false;
-    startRotatePos = 0;
-    endRotatePos = 0.5;
-    score = 0;
-    barrierXone = 1;
-    barrierXtwo = barrierXone + 1.5;
+    setState(() {
+      brickYaxis = 1;
+      brickXaxis = -0.9;
+      time = 0;
+      height = 0;
+      initialHeight = brickYaxis;
+      jumpStarted = false;
+      gameStarted = false;
+      firsRotate = true;
+      endGame = false;
+      startRotatePos = 0;
+      endRotatePos = 0.5;
+      score = 0;
+      barrierXone = 1;
+      barrierXtwo = barrierXone + 1.5;
+    });
   }
 
   void checkCollision() {
