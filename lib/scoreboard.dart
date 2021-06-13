@@ -2,6 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Scoreboard extends StatefulWidget {
+  final Widget playButton;
+
+  Scoreboard({this.playButton});
+
   @override
   _ScoreboardState createState() => _ScoreboardState();
 }
@@ -19,36 +23,92 @@ class _ScoreboardState extends State<Scoreboard> {
       ),
       title: Column(
         children: <Widget>[
+          Text(
+            "SCOREBOARD",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          Divider(
+            height: 30,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "USERNAME",
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+              Text(
+                "SCORE",
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+          Divider(
+            height: 20,
+          ),
           StreamBuilder(
-              stream: Firestore.instance.collection('scoreboard').snapshots(),
+              stream: Firestore.instance
+                  .collection('scoreboard')
+                  .orderBy('record', descending: true)
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Container(child: Center(child: Text("No data")));
                 }
                 return Container(
-                  height: 300.0,
+                  height: 200.0,
                   width: 300.0,
                   child: ListView.builder(
-                      padding: EdgeInsets.all(8.0),
-                      reverse: true,
                       itemCount: snapshot.data.documents.length,
                       itemBuilder: (_, int index) {
-                        return Text(
-                          snapshot.data.documents[index]["nick"] +
-                              ":" +
-                              snapshot.data.documents[index]["record"]
-                                  .toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  snapshot.data.documents[index]["nick"]
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  snapshot.data.documents[index]["record"]
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Divider(
+                              height: 10,
+                            ),
+                          ],
                         );
-                        //return ChatMessage(text: snapshot.data.documents[index]["messageField"]); //I just assumed that your ChatMessage class takes a parameter message text
                       }),
                 );
               }),
           Divider(
-            height: 1.0,
+            height: 30,
           ),
+          widget.playButton,
         ],
       ),
       actions: [],

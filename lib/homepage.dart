@@ -96,11 +96,25 @@ class _HomePageState extends State<HomePage>
   }
 
   void showScoreboard() {
+    Widget playButton = IconButton(
+      icon: Icon(
+        Icons.play_arrow,
+        color: Colors.red[700],
+        size: 40,
+      ),
+      onPressed: () {
+        getRecord();
+        Navigator.of(context).pop();
+      },
+    );
+
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return Scoreboard();
+        return Scoreboard(
+          playButton: playButton,
+        );
       },
     );
   }
@@ -283,46 +297,35 @@ class _HomePageState extends State<HomePage>
     if (barrierXone > brickXaxis - 0.4 &&
         barrierXone < brickXaxis + 0.4 &&
         brickYaxis > 1 - 0.4) {
-      mainThemeSoundPlayer.stop();
-      mainThemeSongStarted = false;
-      gameOverSoundPlayer.play();
-      showEndGameDialog(context);
-      updateRecord(score);
-      endGame = true;
+      handleGameEnd();
     }
 
     if (barrierXtwo > brickXaxis - 0.4 &&
         barrierXtwo < brickXaxis + 0.4 &&
         brickYaxis > 1 - 0.2) {
-      mainThemeSoundPlayer.stop();
-      mainThemeSongStarted = false;
-      gameOverSoundPlayer.play();
-      showEndGameDialog(context);
-      updateRecord(score);
-      endGame = true;
+      handleGameEnd();
     }
 
     if (barrierXone > brickXaxis - 0.4 &&
         barrierXone < brickXaxis + 0.4 &&
         brickYaxis < -1 + 0.4) {
-      mainThemeSoundPlayer.stop();
-      mainThemeSongStarted = false;
-      gameOverSoundPlayer.play();
-      showEndGameDialog(context);
-      updateRecord(score);
-      endGame = true;
+      handleGameEnd();
     }
 
     if (barrierXtwo > brickXaxis - 0.4 &&
         barrierXtwo < brickXaxis + 0.4 &&
         brickYaxis < -1 + 0.6) {
-      mainThemeSoundPlayer.stop();
-      mainThemeSongStarted = false;
-      gameOverSoundPlayer.play();
-      showEndGameDialog(context);
-      updateRecord(score);
-      endGame = true;
+      handleGameEnd();
     }
+  }
+
+  void handleGameEnd() {
+    mainThemeSoundPlayer.stop();
+    mainThemeSongStarted = false;
+    gameOverSoundPlayer.play();
+    showEndGameDialog(context);
+    updateRecord(score);
+    endGame = true;
   }
 
   void loopBariers() {
