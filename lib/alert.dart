@@ -22,7 +22,7 @@ class Alert extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Game over",
+            "Game over!",
             style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.bold,
