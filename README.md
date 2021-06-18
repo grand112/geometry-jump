@@ -2,7 +2,7 @@
 Arcade game written in flutter framework.
 
 # System requirements
-<b>App is supported only from Android 8.0</b>
+<b>App is supported only from Android 4.4</b>
 
 Android SDK minimal version dependency is SDK 23.
 To achieve better user experience, please play with sound on!
